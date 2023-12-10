@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows;
 
-namespace WpfApp1
+namespace WPFImageViewer
 {
     internal class AdjustPictureData
     {
@@ -50,7 +50,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    PixelArray[i    ] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
+                    PixelArray[i] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
                 }
@@ -82,15 +82,15 @@ namespace WpfApp1
 
                 if (typeOfPicture == 4)
                 {
-                    color[1] = (int)((color[1]) * contrastValue);
-                    color[2] = (int)((color[2]) * contrastValue);
-                    color[3] = (int)((color[3]) * contrastValue);
+                    color[1] = (int)((color[1] - 128) * contrastValue) + 128;
+                    color[2] = (int)((color[2] - 128) * contrastValue) + 128;
+                    color[3] = (int)((color[3] - 128) * contrastValue) + 128;
                 }
                 else
                 {
-                    color[0] = (int)((color[0]) * contrastValue);
-                    color[1] = (int)((color[1]) * contrastValue);
-                    color[2] = (int)((color[2]) * contrastValue);
+                    color[0] = (int)((color[0] - 128) * contrastValue) + 128;
+                    color[1] = (int)((color[1] - 128) * contrastValue) + 128;
+                    color[2] = (int)((color[2] - 128) * contrastValue) + 128;
                 }
 
                 // Clamp to byte boundaries
@@ -102,7 +102,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    PixelArray[i    ] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
+                    PixelArray[i] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
                 }

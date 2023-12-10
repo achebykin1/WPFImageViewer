@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace WpfApp1
+namespace WPFImageViewer
 {
     /// <summary>
     /// Interaction logic for ImageViewer.xaml

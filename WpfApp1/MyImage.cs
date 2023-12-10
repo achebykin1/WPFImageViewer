@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using static System.Net.Mime.MediaTypeNames;
 
 
-namespace WpfApp1
+namespace WPFImageViewer
 {
     enum ImageFormat : int
     {

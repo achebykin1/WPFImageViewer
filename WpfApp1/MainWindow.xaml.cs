@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApp1
+namespace WPFImageViewer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -51,9 +51,9 @@ namespace WpfApp1
                 {
                     WriteableBitmap imgW = new WriteableBitmap(f.Picture);
                     imgW = AdjustPictureData.AdjustContrast(imgW, Value);
-                    MessageBox.Show(f.Picture.Format.ToString());
+                    //MessageBox.Show(f.Picture.Format.ToString());
                     f.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, f.Picture.Format, f.Picture.Palette, 0.0));
-                    MessageBox.Show(f.Picture.Format.ToString());
+                    //MessageBox.Show(f.Picture.Format.ToString());
                     f.Changed = true;
                 }
             }
