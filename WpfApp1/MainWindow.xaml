@@ -1,0 +1,90 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate x:Key="listTemplate">
+            <StackPanel Margin="5">
+                <Image x:Name="currentImage" 
+                       Height="{Binding ElementName=ZoomSlider, Path='Value'}"
+                       Width="{Binding ElementName=ZoomSlider, Path='Value'}" 
+                       Source="{Binding Path=Picture}" />
+                <TextBlock FontSize="12" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                <CheckBox x:Name="checkBox" IsChecked="{Binding Path=Selected}" Height="20" Content="select" IsThreeState="False"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.2*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,10">
+            <Button DockPanel.Dock="Right" Width="60" Margin="0,0,5,0" IsDefault="True" Click="OnImagesDirChangeClick">Change</Button>
+            <Label DockPanel.Dock="Left" Margin="0,0,10,0">Path:</Label>
+            <TextBox Name="ImagesDir" Margin="10,0" />
+        </DockPanel>
+
+        <Button Grid.Column="1" Grid.Row="0" Margin="5,0,5,10" Click="OnHelp">Help</Button>
+        <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="3"
+        HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+        <ListBox Grid.Column="0" Grid.Row="2" x:Name="imagesList" ItemTemplate="{StaticResource listTemplate}" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="ImageDoubleClick">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit" Click="EditPhoto" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+        <StackPanel Grid.Column="1" Grid.Row="2" Margin="0,10,0,0">
+            <DockPanel DockPanel.Dock="Bottom" Margin="0">
+                <Label DockPanel.Dock="Top" HorizontalAlignment="Center" >Contrast</Label>
+                <DockPanel DockPanel.Dock="Left">
+                    <Button Margin="5,0,5,5" Width="50" Click="ContastIncreased">+</Button>
+                    <Button Margin="0,0,0,5" Width="50" Click="ContastDecreased">-</Button>
+                </DockPanel>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom" Margin="0">
+                <Label DockPanel.Dock="Top" HorizontalAlignment="Center" >Brightness</Label>
+                <DockPanel DockPanel.Dock="Left">
+                    <Button Margin="5,0,5,5" Width="50" Click="BrightnessIncreased">+</Button>
+                    <Button Margin="0,0,0,5" Width="50" Click="BrightnessDecreased">-</Button>
+                </DockPanel>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom" Margin="0">
+                <Label DockPanel.Dock="Top" >Zoom:</Label>
+                <Slider Name="ZoomSlider"
+                Margin="10,0,0,0"
+                 Orientation="Horizontal"
+                Minimum="80"
+                Maximum="320"
+                Value="160"
+                TickFrequency="80"
+                TickPlacement="BottomRight"
+                SmallChange="5"
+                LargeChange="20" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <Button Margin="5,0,5,5" Width="50" Click="UndoChanges">Undo</Button>
+                <Button Margin="0,0,0,5" Width="50" Click="ApplyChanges">Save</Button>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>
