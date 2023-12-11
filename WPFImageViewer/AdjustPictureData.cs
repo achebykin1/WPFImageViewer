@@ -10,6 +10,7 @@ namespace WPFImageViewer
 {
     internal class AdjustPictureData
     {
+
         public static WriteableBitmap AdjustBrightness(WriteableBitmap source, int Value)           //Changing Brightness by summing Value and data of every Pixel in every color(RGB)
         {
             var dest = new WriteableBitmap(source);

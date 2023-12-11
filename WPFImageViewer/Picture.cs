@@ -26,6 +26,7 @@ namespace WPFImageViewer
         private Uri dirPath;
         private ImageFormat Format;
         private BitmapSource pictureOriginal;                                                                       //original picture
+        
         public Picture(string path, string name)
         {
             this.path = path;
@@ -55,6 +56,7 @@ namespace WPFImageViewer
                     break;
             }
         }
+        
         public Picture(Picture copy)
         {
             path = copy.path;
@@ -66,6 +68,7 @@ namespace WPFImageViewer
             pictureOriginal = copy.pictureOriginal.Clone();
             pictureToDraw = BitmapFrame.Create(pictureOriginal);
         }
+        
         public string ImagePath 
         { 
             set
@@ -75,8 +78,14 @@ namespace WPFImageViewer
             }
             get { return path; }
         }
-        public bool Selected { get; set; }
+        
+        public bool Selected { get; set; }  
         public bool Changed { get; set; }
+        public string Name { get; set; }
+        public BitmapSource PictureOriginal { get { return pictureOriginal; } }
+
+        public BitmapFrame pictureToDraw { get; set; }                                                              //Picture that we are drawing in window
+
         public string getFormat 
         {
             get 
@@ -85,17 +94,15 @@ namespace WPFImageViewer
                 return ext;
             } 
         }
-        public string Name { get; set; }
-        public BitmapFrame pictureToDraw { get; set; }                                                              //Picture that we are drawing in window
-
-        public BitmapSource PictureOriginal { get { return pictureOriginal; } }
 
         public override string ToString() => dirPath.ToString();
+        
         public void Undo()
         {
             pictureToDraw = BitmapFrame.Create(pictureOriginal);
             Changed = false;
         }
+
         public void Save()
         {
             try

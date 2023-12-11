@@ -25,13 +25,16 @@ namespace WPFImageViewer
         {
             InitializeComponent();
         }
+        
         public Picture SelectedPicture { get; set; }                                                                                    //Picture that will be edited
+        
         private void WindowLoaded(object sender, RoutedEventArgs e)                                                                     //onLoaded
         {
             ZoomViewbox.Width = SelectedPicture.pictureToDraw.PixelWidth;
             ZoomViewbox.Height = SelectedPicture.pictureToDraw.PixelHeight;
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
+        
         private void UpdateViewBox(double Value)                                                                                        //Updating Image after zoom
         {
             if ((ZoomViewbox.Width >= 0) && ZoomViewbox.Height >= 0)
@@ -40,6 +43,7 @@ namespace WPFImageViewer
                 ZoomViewbox.Height = SelectedPicture.pictureToDraw.PixelHeight * Value;
             }
         }
+        
         private void Undo()                                                                                                             //Undo changes
         {
             ContrastSlider.Value = 0;
@@ -48,11 +52,13 @@ namespace WPFImageViewer
                 SelectedPicture.Undo();
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
+        
         private void Slider_ZoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                        //Zoom
         {
             double Value = ((Slider)sender).Value;
             UpdateViewBox(Value);
         }
+        
         private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                    //Contrast
         {
             int Value = (int)((Slider)sender).Value;
@@ -65,6 +71,7 @@ namespace WPFImageViewer
             SelectedPicture.Changed = true;
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
+        
         private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                  //Brightness
         {
             int Value = (int)((Slider)sender).Value;
@@ -77,7 +84,9 @@ namespace WPFImageViewer
             SelectedPicture.Changed = true;
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
+        
         private void UndoChanges(object sender, RoutedEventArgs e) { Undo(); } 
+        
         private void SaveChanges(object sender, RoutedEventArgs e)                                                                      //Saving changes
         {
             if (SelectedPicture.Changed)
@@ -92,6 +101,7 @@ namespace WPFImageViewer
                 }
             }
         }
+        
         void ImageViewer_Closing(object sender, CancelEventArgs e)                                                                      //in Case of closing undo all editing
         { 
             Undo();

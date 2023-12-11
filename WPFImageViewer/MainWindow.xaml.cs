@@ -21,6 +21,7 @@ namespace WPFImageViewer
 
         private ObservableCollection<Picture> Images = new ObservableCollection<Picture>(); //Images that will be shown
         private DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory);  //Directory where Images stored
+        
         private void UpdateImages()                                                         //Update Images in case of new Directory
         {
             Images.Clear();
@@ -43,6 +44,7 @@ namespace WPFImageViewer
                 MessageBox.Show("This directory does not exist");
             }
         }
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -67,6 +69,7 @@ namespace WPFImageViewer
             }
             imagesList.Items.Refresh();
         }
+        
         private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                        //Changing Contrast
         {
             int Value = (int)((Slider)sender).Value;
@@ -85,6 +88,7 @@ namespace WPFImageViewer
             }
             imagesList.Items.Refresh();
         }
+        
         private void UndoChanges(object sender, RoutedEventArgs e)                                                                          //Undo Brightness and Contrast changes
         {
             ContrastSlider.Value = 0;
@@ -94,6 +98,7 @@ namespace WPFImageViewer
                     f.Undo();
             imagesList.Items.Refresh();
         }
+        
         private void SaveChanges(object sender, RoutedEventArgs e)                                                                          //Save Brightness and Contrast changes
         {
             foreach (var f in Images)
@@ -109,6 +114,7 @@ namespace WPFImageViewer
                     }
                 }
         }
+        
         private void EditPicture(object sender, RoutedEventArgs e)                                                                          //Start a child window for editing a single Picture
         {
             var pvWindow = new ImageViewer { SelectedPicture = (Picture)imagesList.SelectedItem };
@@ -117,7 +123,6 @@ namespace WPFImageViewer
 
         }
 
-
         private void ImageDoubleClick(object sender, MouseButtonEventArgs e)                                                                //Selecting an Image with Double Click
         {
             Picture p = (Picture)imagesList.SelectedItem;
@@ -125,6 +130,7 @@ namespace WPFImageViewer
             imagesList.SelectedItem = p;
             imagesList.Items.Refresh();
         }
+        
         private void OnImagesDirChangeClick(object sender, RoutedEventArgs e)                                                               //Changing Directory
         { 
             ContrastSlider.Value = 0;
@@ -139,6 +145,7 @@ namespace WPFImageViewer
                 MessageBox.Show("Empty, try again");
             }
         }
+        
         private void OnHelp(object sender, RoutedEventArgs e)                                                                               //HelpBox
         {
             MessageBox.Show("1. Write in \"Path\" TextBox your path to directory with images? then press \"Change\"\n\n" +
