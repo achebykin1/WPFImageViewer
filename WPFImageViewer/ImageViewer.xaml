@@ -73,7 +73,7 @@
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
                 <Button Margin="5,0,5,5" Width="50" Click="UndoChanges">Undo</Button>
-                <Button Margin="0,0,0,5" Width="50" Click="ApplyChanges">Save</Button>
+                <Button Margin="0,0,0,5" Width="50" Click="SaveChanges">Save</Button>
             </DockPanel>
         </StackPanel>
     </Grid>

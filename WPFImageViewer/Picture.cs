@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace WPFImageViewer
 {
-    enum ImageFormat : int
+    enum ImageFormat : int                                                                                          //Help for Encoder in Save method
     {
         jpg = 0,
         png = 1,
@@ -25,7 +25,7 @@ namespace WPFImageViewer
         private string path;
         private Uri dirPath;
         private ImageFormat Format;
-        private BitmapSource pictureOriginal;  //original picture
+        private BitmapSource pictureOriginal;                                                                       //original picture
         public Picture(string path, string name)
         {
             this.path = path;
@@ -86,7 +86,7 @@ namespace WPFImageViewer
             } 
         }
         public string Name { get; set; }
-        public BitmapFrame pictureToDraw { get; set; }
+        public BitmapFrame pictureToDraw { get; set; }                                                              //Picture that we are drawing in window
 
         public BitmapSource PictureOriginal { get { return pictureOriginal; } }
 
@@ -96,9 +96,16 @@ namespace WPFImageViewer
             pictureToDraw = BitmapFrame.Create(pictureOriginal);
             Changed = false;
         }
-        public void Apply()
+        public void Save()
         {
-            File.Delete(ImagePath);
+            try
+            {
+                File.Delete(ImagePath);
+            }
+            catch 
+            {
+                throw;
+            }
             using (var fileStream = new FileStream(ImagePath, FileMode.Create))
             {
                 BitmapEncoder encoder;

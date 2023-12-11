@@ -44,7 +44,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="ImageDoubleClick">
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Edit" Click="EditPhoto" />
+                    <MenuItem Header="Edit" Click="EditPicture" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
@@ -101,7 +101,7 @@
             </DockPanel>
             <DockPanel>
                 <Button Margin="5,0,5,5" Width="50" Click="UndoChanges" Content="Undo"/>
-                <Button Margin="0,0,0,5" Width="50" Click="ApplyChanges" Content="Save"/>
+                <Button Margin="0,0,0,5" Width="50" Click="SaveChanges" Content="Save"/>
             </DockPanel>
         </StackPanel>
     </Grid>

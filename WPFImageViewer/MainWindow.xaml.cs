@@ -19,9 +19,9 @@ namespace WPFImageViewer
     public partial class MainWindow : Window
     {
 
-        private ObservableCollection<Picture> Images = new ObservableCollection<Picture>();
-        private DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory + "\\images");
-        private void UpdateImages()
+        private ObservableCollection<Picture> Images = new ObservableCollection<Picture>(); //Images that will be shown
+        private DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory);  //Directory where Images stored
+        private void UpdateImages()                                                         //Update Images in case of new Directory
         {
             Images.Clear();
             try
@@ -47,19 +47,18 @@ namespace WPFImageViewer
         {
             InitializeComponent();
             imagesList.ItemsSource = Images;
-            int a = 1;
-            UpdateImages();
-            ImagesDir.Text = directory.ToString();
+            initWindow();
         }
 
-        private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                      //Changing Brightness
         {
             int Value = (int)((Slider)sender).Value;
             foreach (var f in Images)
             {
                 if (f.Selected)
                 {
-                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));
+                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));       //Making a more specific image,
+                                                                                                                                                                        //in case of diffrent PixelFormat
                     imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
                     f.pictureToDraw = BitmapFrame.Create(imgW);
                     f.Changed = true;
@@ -67,14 +66,16 @@ namespace WPFImageViewer
             }
             imagesList.Items.Refresh();
         }
-        private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                        //Changing Contrast
         {
             int Value = (int)((Slider)sender).Value;
             foreach (var f in Images)
             {
                 if (f.Selected)
                 {
-                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));
+                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));       //Making a more specific image,
+                                                                                                                                                                        //in case of diffrent PixelFormat
+                    imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
                     imgW = AdjustPictureData.AdjustContrast(imgW, Value);
                     f.pictureToDraw = BitmapFrame.Create(imgW);
                     f.Changed = true;
@@ -82,7 +83,7 @@ namespace WPFImageViewer
             }
             imagesList.Items.Refresh();
         }
-        private void UndoChanges(object sender, RoutedEventArgs e)
+        private void UndoChanges(object sender, RoutedEventArgs e)                                                                          //Undo Brightness and Contrast changes
         {
             ContrastSlider.Value = 0;
             BrightnessSlider.Value = 0;
@@ -91,13 +92,22 @@ namespace WPFImageViewer
                     f.Undo();
             imagesList.Items.Refresh();
         }
-        private void ApplyChanges(object sender, RoutedEventArgs e)
+        private void SaveChanges(object sender, RoutedEventArgs e)                                                                          //Save Brightness and Contrast changes
         {
             foreach (var f in Images)
-                if (f.Changed)
-                    f.Apply();
+                if (f.Changed) 
+                {
+                    try
+                    {
+                        f.Save();
+                    }
+                    catch 
+                    {
+                        MessageBox.Show("Can't save, something is wrong");
+                    }
+                }
         }
-        private void EditPhoto(object sender, RoutedEventArgs e)
+        private void EditPicture(object sender, RoutedEventArgs e)                                                                          //Start a child window for editing a single Picture
         {
             var pvWindow = new ImageViewer { SelectedPicture = (Picture)imagesList.SelectedItem };
             pvWindow.Show();
@@ -106,22 +116,28 @@ namespace WPFImageViewer
         }
 
 
-        private void ImageDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ImageDoubleClick(object sender, MouseButtonEventArgs e)                                                                //Selecting an Image with Double Click
         {
             Picture p = (Picture)imagesList.SelectedItem;
             p.Selected = p.Selected ? false : true;
             imagesList.SelectedItem = p;
             imagesList.Items.Refresh();
         }
-        private void OnImagesDirChangeClick(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("You changed Dir"); 
+        private void OnImagesDirChangeClick(object sender, RoutedEventArgs e)                                                               //Changing Directory
+        { 
             ContrastSlider.Value = 0;
             BrightnessSlider.Value = 0;
-            directory = new DirectoryInfo(ImagesDir.Text);
-            UpdateImages();
+            try
+            {
+                directory = new DirectoryInfo(ImagesDir.Text);
+                UpdateImages();
+            } 
+            catch(System.ArgumentException)
+            {
+                MessageBox.Show("Empty, try again");
+            }
         }
-        private void OnHelp(object sender, RoutedEventArgs e)
+        private void OnHelp(object sender, RoutedEventArgs e)                                                                               //HelpBox
         {
             MessageBox.Show("1. Write in \"Path\" TextBox your path to directory with images? then press \"Change\"\n\n" +
                 "2. + and - near \"Contrast\" and \"Brightness\" will increase or decrease Contrast/Brightness\n\n" +
@@ -129,6 +145,7 @@ namespace WPFImageViewer
                 "4. If you right-click on the picture, you will have a tooltip where you can open the selected image in another window");
         }
 
-        private void PvWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e) { imagesList.Items.Refresh(); }    
+        private void PvWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e) { imagesList.Items.Refresh(); }              //Update images after editing in child window
+        private void initWindow() { MessageBox.Show("Write your directory in \"Path\" TextBox\n\nFor more information press \"Help\" "); }  //initialize Help
     }
 }
