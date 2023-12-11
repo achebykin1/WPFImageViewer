@@ -19,7 +19,7 @@ namespace WPFImageViewer
     public partial class MainWindow : Window
     {
 
-        private ObservableCollection<MyImage> Images = new ObservableCollection<MyImage>();
+        private ObservableCollection<Picture> Images = new ObservableCollection<Picture>();
         private DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory + "\\images");
         private void UpdateImages()
         {
@@ -27,13 +27,13 @@ namespace WPFImageViewer
             try
             {
                 foreach (var f in directory.GetFiles("*.jpg"))
-                    Images.Add(new MyImage(f.FullName, f.Name));
+                    Images.Add(new Picture(f.FullName, f.Name));
                 foreach (var f in directory.GetFiles("*.jpeg"))
-                    Images.Add(new MyImage(f.FullName, f.Name));
+                    Images.Add(new Picture(f.FullName, f.Name));
                 foreach (var f in directory.GetFiles("*.png"))
-                    Images.Add(new MyImage(f.FullName, f.Name));
+                    Images.Add(new Picture(f.FullName, f.Name));
                 foreach (var f in directory.GetFiles("*.bmp"))
-                    Images.Add(new MyImage(f.FullName, f.Name));
+                    Images.Add(new Picture(f.FullName, f.Name));
                 if (Images.Count > 0)
                     imagesList.Items.Refresh();
                 else
@@ -43,66 +43,49 @@ namespace WPFImageViewer
                 MessageBox.Show("This directory does not exist");
             }
         }
-        private void AdjustContrast(int Value)
-        {
-            foreach (var f in Images)
-            {
-                if (f.Selected)
-                {
-                    WriteableBitmap imgW = new WriteableBitmap(f.Picture);
-                    imgW = AdjustPictureData.AdjustContrast(imgW, Value);
-                    //MessageBox.Show(f.Picture.Format.ToString());
-                    f.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, f.Picture.Format, f.Picture.Palette, 0.0));
-                    //MessageBox.Show(f.Picture.Format.ToString());
-                    f.Changed = true;
-                }
-            }
-        }
-        private void AdjustBrightness(int Value)
-        {
-            foreach (var f in Images)
-            {
-                if (f.Selected)
-                {
-                    WriteableBitmap imgW = new WriteableBitmap(f.Picture);
-                    imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
-                    f.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, f.Picture.Format, f.Picture.Palette, 0.0));
-                    //f.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, PixelFormats.Rgb24, new BitmapPalette(f.Picture, 16), 0.0));
-                    f.Changed = true;
-                }
-            }
-        }
         public MainWindow()
         {
             InitializeComponent();
-            UpdateImages();
             imagesList.ItemsSource = Images;
+            int a = 1;
+            UpdateImages();
             ImagesDir.Text = directory.ToString();
         }
 
-
-        private void ContastIncreased(object sender, RoutedEventArgs e)
+        private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            AdjustContrast(10);
+            int Value = (int)((Slider)sender).Value;
+            foreach (var f in Images)
+            {
+                if (f.Selected)
+                {
+                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));
+                    imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
+                    f.pictureToDraw = BitmapFrame.Create(imgW);
+                    f.Changed = true;
+                }
+            }
             imagesList.Items.Refresh();
         }
-        private void ContastDecreased(object sender, RoutedEventArgs e)
+        private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            AdjustContrast(-10);
-            imagesList.Items.Refresh();
-        }
-        private void BrightnessIncreased(object sender, RoutedEventArgs e)
-        {
-            AdjustBrightness(10);
-            imagesList.Items.Refresh();
-        }
-        private void BrightnessDecreased(object sender, RoutedEventArgs e)
-        {
-            AdjustBrightness(-10);
+            int Value = (int)((Slider)sender).Value;
+            foreach (var f in Images)
+            {
+                if (f.Selected)
+                {
+                    WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));
+                    imgW = AdjustPictureData.AdjustContrast(imgW, Value);
+                    f.pictureToDraw = BitmapFrame.Create(imgW);
+                    f.Changed = true;
+                }
+            }
             imagesList.Items.Refresh();
         }
         private void UndoChanges(object sender, RoutedEventArgs e)
         {
+            ContrastSlider.Value = 0;
+            BrightnessSlider.Value = 0;
             foreach (var f in Images)
                 if (f.Changed)
                     f.Undo();
@@ -116,20 +99,25 @@ namespace WPFImageViewer
         }
         private void EditPhoto(object sender, RoutedEventArgs e)
         {
-            var pvWindow = new ImageViewer { SelectedMyImage = (MyImage)imagesList.SelectedItem };
+            var pvWindow = new ImageViewer { SelectedPicture = (Picture)imagesList.SelectedItem };
             pvWindow.Show();
+            pvWindow.Closing += PvWindow_Closing;
 
         }
+
+
         private void ImageDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MyImage p = (MyImage)imagesList.SelectedItem;
+            Picture p = (Picture)imagesList.SelectedItem;
             p.Selected = p.Selected ? false : true;
             imagesList.SelectedItem = p;
             imagesList.Items.Refresh();
         }
         private void OnImagesDirChangeClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("You changed Dir");
+            MessageBox.Show("You changed Dir"); 
+            ContrastSlider.Value = 0;
+            BrightnessSlider.Value = 0;
             directory = new DirectoryInfo(ImagesDir.Text);
             UpdateImages();
         }
@@ -140,5 +128,7 @@ namespace WPFImageViewer
                 "3. \"Undo\" will undo your changes\n\n3. \"Save\" will save your changes\n\n" +
                 "4. If you right-click on the picture, you will have a tooltip where you can open the selected image in another window");
         }
+
+        private void PvWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e) { imagesList.Items.Refresh(); }    
     }
 }

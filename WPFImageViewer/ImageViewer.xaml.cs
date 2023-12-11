@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,78 +24,66 @@ namespace WPFImageViewer
         public ImageViewer()
         {
             InitializeComponent();
-
+            Owner = App.Current.MainWindow;
         }
-        public MyImage SelectedMyImage { get; set; }
+        public Picture SelectedPicture { get; set; }
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            ZoomViewbox.Width = SelectedMyImage.Picture.PixelWidth;
-            ZoomViewbox.Height = SelectedMyImage.Picture.PixelHeight;
-            ViewedPhoto.Source = SelectedMyImage.Picture;
+            ZoomViewbox.Width = SelectedPicture.pictureToDraw.PixelWidth;
+            ZoomViewbox.Height = SelectedPicture.pictureToDraw.PixelHeight;
+            ViewedPhoto.Source = SelectedPicture.pictureToDraw;
+        }
+        private void UpdateViewBox(double Value)
+        {
+            if ((ZoomViewbox.Width >= 0) && ZoomViewbox.Height >= 0)
+            {
+                ZoomViewbox.Width = SelectedPicture.pictureToDraw.PixelWidth * Value;
+                ZoomViewbox.Height = SelectedPicture.pictureToDraw.PixelHeight * Value;
+            }
+        }
+        private void Undo()
+        {
+            ContrastSlider.Value = 0;
+            BrightnessSlider.Value = 0;
+            if (SelectedPicture.Changed)
+                SelectedPicture.Undo();
+            ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
         private void Slider_ZoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             double Value = ((Slider)sender).Value;
             UpdateViewBox(Value);
         }
-        private void AdjustContrast(int Value)
+        private void Slider_ContrastChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            
-                    WriteableBitmap imgW = new WriteableBitmap(SelectedMyImage.Picture);
-                    imgW = AdjustPictureData.AdjustContrast(imgW, Value);
-                    SelectedMyImage.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, SelectedMyImage.Picture.Format, SelectedMyImage.Picture.Palette, 0.0));
-                    SelectedMyImage.Changed = true;
+            int Value = (int)((Slider)sender).Value;
+            WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(SelectedPicture.PictureOriginal, PixelFormats.Rgb24, 
+                            SelectedPicture.PictureOriginal.Palette, 0.0));
+            imgW = AdjustPictureData.AdjustContrast(imgW, Value);
+            SelectedPicture.pictureToDraw = BitmapFrame.Create(imgW);
+            SelectedPicture.Changed = true;
+            ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
-        private void AdjustBrightness(int Value)
+        private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            
-                    WriteableBitmap imgW = new WriteableBitmap(SelectedMyImage.Picture);
-                    imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
-                    SelectedMyImage.Picture = BitmapFrame.Create(new FormatConvertedBitmap(imgW, SelectedMyImage.Picture.Format, SelectedMyImage.Picture.Palette, 0.0));
-                    SelectedMyImage.Changed = true;
+            int Value = (int)((Slider)sender).Value;
+            WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(SelectedPicture.PictureOriginal, PixelFormats.Rgb24,
+                            SelectedPicture.PictureOriginal.Palette, 0.0));
+            imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
+            SelectedPicture.pictureToDraw = BitmapFrame.Create(imgW);
+            SelectedPicture.Changed = true;
+            ViewedPhoto.Source = SelectedPicture.pictureToDraw;
         }
-        private void UpdateViewBox(double Value)
-        {
-            if ((ZoomViewbox.Width >= 0) && ZoomViewbox.Height >= 0)
-            {
-                ZoomViewbox.Width  = SelectedMyImage.Picture.PixelWidth * Value;
-                ZoomViewbox.Height = SelectedMyImage.Picture.PixelHeight * Value;
-            }
-        }
-        private void ContastIncreased(object sender, RoutedEventArgs e)
-        {
-            AdjustContrast(10);
-            //imagesList.Items.Refresh();
-            ViewedPhoto.Source = SelectedMyImage.Picture;
-        }
-        private void ContastDecreased(object sender, RoutedEventArgs e)
-        {
-            AdjustContrast(-10);
-            //imagesList.Items.Refresh();
-            ViewedPhoto.Source = SelectedMyImage.Picture;
-        }
-        private void BrightnessIncreased(object sender, RoutedEventArgs e)
-        {
-            AdjustBrightness(10);
-            //imagesList.Items.Refresh();
-            ViewedPhoto.Source = SelectedMyImage.Picture;
-        }
-        private void BrightnessDecreased(object sender, RoutedEventArgs e)
-        {
-            AdjustBrightness(-10);
-            //imagesList.Items.Refresh();
-            ViewedPhoto.Source = SelectedMyImage.Picture;
-        }
-        private void UndoChanges(object sender, RoutedEventArgs e)
-        {
-            if (SelectedMyImage.Changed)
-                SelectedMyImage.Undo();
-            ViewedPhoto.Source = SelectedMyImage.Picture;
-        }
+        private void UndoChanges(object sender, RoutedEventArgs e) { Undo(); } 
         private void ApplyChanges(object sender, RoutedEventArgs e)
         {
-            if (SelectedMyImage.Changed)
-                SelectedMyImage.Apply();
+            if (SelectedPicture.Changed)
+                SelectedPicture.Apply();
+        }
+        void ImageViewer_Closing(object sender, CancelEventArgs e) 
+        { 
+            Undo();
+            App.Current.MainWindow.UpdateLayout();
         }
     }
 }

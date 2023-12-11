@@ -28,32 +28,32 @@ namespace WPFImageViewer
                 if (typeOfPicture == 4)
                     color[3] = PixelArray[i + 3];
 
-                if (typeOfPicture == 4)
+                /*if (typeOfPicture == 4)
                 {
                     color[1] = color[1] + Value;
                     color[2] = color[2] + Value;
                     color[3] = color[3] + Value;
                 }
                 else
-                {
+                {*/
                     color[0] = color[0] + Value;
                     color[1] = color[1] + Value;
                     color[2] = color[2] + Value;
-                }
+                //}
 
                 // Clamp to byte boundaries
-                if (typeOfPicture == 4)
+                /*if (typeOfPicture == 4)
                 {
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
                     PixelArray[i + 3] = (byte)(color[3] > 255 ? 255 : (color[3] < 0 ? 0 : color[3]));
                 }
                 else
-                {
+                {*/
                     PixelArray[i] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
-                }
+                //}
             }
             Int32Rect a = new Int32Rect(0, 0, source.PixelWidth, source.PixelHeight);
 
@@ -80,32 +80,32 @@ namespace WPFImageViewer
                 if (typeOfPicture == 4)
                     color[3] = PixelArray[i + 3];
 
-                if (typeOfPicture == 4)
+                /*if (typeOfPicture == 4)
                 {
                     color[1] = (int)((color[1] - 128) * contrastValue) + 128;
                     color[2] = (int)((color[2] - 128) * contrastValue) + 128;
                     color[3] = (int)((color[3] - 128) * contrastValue) + 128;
                 }
                 else
-                {
+                {*/
                     color[0] = (int)((color[0] - 128) * contrastValue) + 128;
                     color[1] = (int)((color[1] - 128) * contrastValue) + 128;
                     color[2] = (int)((color[2] - 128) * contrastValue) + 128;
-                }
+                //}
 
                 // Clamp to byte boundaries
-                if (typeOfPicture == 4)
+                /*if (typeOfPicture == 4)
                 {
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
                     PixelArray[i + 3] = (byte)(color[3] > 255 ? 255 : (color[3] < 0 ? 0 : color[3]));
                 }
                 else
-                {
+                {*/
                     PixelArray[i] = (byte)(color[0] > 255 ? 255 : (color[0] < 0 ? 0 : color[0]));
                     PixelArray[i + 1] = (byte)(color[1] > 255 ? 255 : (color[1] < 0 ? 0 : color[1]));
                     PixelArray[i + 2] = (byte)(color[2] > 255 ? 255 : (color[2] < 0 ? 0 : color[2]));
-                }
+                //}
             }
             Int32Rect a = new Int32Rect(0, 0, source.PixelWidth, source.PixelHeight);
 

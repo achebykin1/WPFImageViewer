@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -17,20 +19,27 @@ namespace WPFImageViewer
         png = 1,
         bmp = 2
     }
-    public class MyImage
+    public class Picture
     {
         
         private string path;
         private Uri dirPath;
         private ImageFormat Format;
-        public MyImage(string path, string name)
+        private BitmapSource pictureOriginal;  //original picture
+        public Picture(string path, string name)
         {
             this.path = path;
             Name = name;
             Selected = false;
             Changed = false;
             dirPath = new Uri(path);
-            Picture = BitmapFrame.Create(dirPath);
+            BitmapImage bmi = new BitmapImage();
+            bmi.BeginInit();
+            bmi.CacheOption = BitmapCacheOption.OnLoad;
+            bmi.UriSource = dirPath;
+            bmi.EndInit();
+            pictureOriginal = bmi;
+            pictureToDraw = BitmapFrame.Create(pictureOriginal);
             string ext = Path.GetExtension(path);
             switch (ext)
             {
@@ -46,7 +55,7 @@ namespace WPFImageViewer
                     break;
             }
         }
-        public MyImage(MyImage copy)
+        public Picture(Picture copy)
         {
             path = copy.path;
             Name = copy.Name;
@@ -54,7 +63,8 @@ namespace WPFImageViewer
             Selected = copy.Selected;
             Changed = copy.Changed;
             dirPath = copy.dirPath;
-            Picture = BitmapFrame.Create(dirPath); 
+            pictureOriginal = copy.pictureOriginal.Clone();
+            pictureToDraw = BitmapFrame.Create(pictureOriginal);
         }
         public string ImagePath 
         { 
@@ -76,12 +86,14 @@ namespace WPFImageViewer
             } 
         }
         public string Name { get; set; }
-        public BitmapFrame Picture { get; set; }
+        public BitmapFrame pictureToDraw { get; set; }
+
+        public BitmapSource PictureOriginal { get { return pictureOriginal; } }
 
         public override string ToString() => dirPath.ToString();
         public void Undo()
         {
-            Picture = BitmapFrame.Create(dirPath);
+            pictureToDraw = BitmapFrame.Create(pictureOriginal);
             Changed = false;
         }
         public void Apply()
@@ -103,9 +115,10 @@ namespace WPFImageViewer
                         break;
 
                 }
-                encoder.Frames.Add(Picture);
+                encoder.Frames.Add(pictureToDraw);
                 encoder.Save(fileStream);
             }
+            pictureOriginal = pictureToDraw.Clone();
             Changed = false;
             Selected = false;
         }
