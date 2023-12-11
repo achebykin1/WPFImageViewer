@@ -59,6 +59,8 @@ namespace WPFImageViewer
             WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(SelectedPicture.PictureOriginal, PixelFormats.Rgb24, 
                             SelectedPicture.PictureOriginal.Palette, 0.0));
             imgW = AdjustPictureData.AdjustContrast(imgW, Value);
+            if (Math.Abs(BrightnessSlider.Value) > 0.001)
+                imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
             SelectedPicture.pictureToDraw = BitmapFrame.Create(imgW);
             SelectedPicture.Changed = true;
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
@@ -68,6 +70,8 @@ namespace WPFImageViewer
             int Value = (int)((Slider)sender).Value;
             WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(SelectedPicture.PictureOriginal, PixelFormats.Rgb24,
                             SelectedPicture.PictureOriginal.Palette, 0.0));
+            if (Math.Abs(ContrastSlider.Value) > 0.001)
+                imgW = AdjustPictureData.AdjustContrast(imgW, (int)ContrastSlider.Value);
             imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
             SelectedPicture.pictureToDraw = BitmapFrame.Create(imgW);
             SelectedPicture.Changed = true;

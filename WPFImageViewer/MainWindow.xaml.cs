@@ -47,7 +47,6 @@ namespace WPFImageViewer
         {
             InitializeComponent();
             imagesList.ItemsSource = Images;
-            initWindow();
         }
 
         private void Slider_BrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> e)                                      //Changing Brightness
@@ -58,7 +57,9 @@ namespace WPFImageViewer
                 if (f.Selected)
                 {
                     WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));       //Making a more specific image,
-                                                                                                                                                                        //in case of diffrent PixelFormat
+                                                                                                                                                                       //in case of diffrent PixelFormat
+                    if (Math.Abs(ContrastSlider.Value) > 0.001)
+                        imgW = AdjustPictureData.AdjustContrast(imgW, (int)ContrastSlider.Value);
                     imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
                     f.pictureToDraw = BitmapFrame.Create(imgW);
                     f.Changed = true;
@@ -75,8 +76,9 @@ namespace WPFImageViewer
                 {
                     WriteableBitmap imgW = new WriteableBitmap(new FormatConvertedBitmap(f.PictureOriginal, PixelFormats.Rgb24, f.PictureOriginal.Palette, 0.0));       //Making a more specific image,
                                                                                                                                                                         //in case of diffrent PixelFormat
-                    imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
                     imgW = AdjustPictureData.AdjustContrast(imgW, Value);
+                    if (Math.Abs(BrightnessSlider.Value) > 0.001)
+                        imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
                     f.pictureToDraw = BitmapFrame.Create(imgW);
                     f.Changed = true;
                 }
@@ -146,6 +148,5 @@ namespace WPFImageViewer
         }
 
         private void PvWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e) { imagesList.Items.Refresh(); }              //Update images after editing in child window
-        private void initWindow() { MessageBox.Show("Write your directory in \"Path\" TextBox\n\nFor more information press \"Help\" "); }  //initialize Help
     }
 }
