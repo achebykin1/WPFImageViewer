@@ -78,7 +78,7 @@ namespace WPFImageViewer
                                                                                                                                                                         //in case of diffrent PixelFormat
                     imgW = AdjustPictureData.AdjustContrast(imgW, Value);
                     if (Math.Abs(BrightnessSlider.Value) > 0.001)
-                        imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
+                        imgW = AdjustPictureData.AdjustBrightness(imgW, (int)BrightnessSlider.Value);
                     f.pictureToDraw = BitmapFrame.Create(imgW);
                     f.Changed = true;
                 }

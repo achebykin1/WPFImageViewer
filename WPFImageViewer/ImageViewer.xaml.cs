@@ -60,7 +60,7 @@ namespace WPFImageViewer
                             SelectedPicture.PictureOriginal.Palette, 0.0));
             imgW = AdjustPictureData.AdjustContrast(imgW, Value);
             if (Math.Abs(BrightnessSlider.Value) > 0.001)
-                imgW = AdjustPictureData.AdjustBrightness(imgW, Value);
+                imgW = AdjustPictureData.AdjustBrightness(imgW, (int)BrightnessSlider.Value);
             SelectedPicture.pictureToDraw = BitmapFrame.Create(imgW);
             SelectedPicture.Changed = true;
             ViewedPhoto.Source = SelectedPicture.pictureToDraw;
